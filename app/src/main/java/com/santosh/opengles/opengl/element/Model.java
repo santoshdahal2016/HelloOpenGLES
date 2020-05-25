@@ -1,11 +1,13 @@
 package com.santosh.opengles.opengl.element;
 
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class Model {
 
@@ -14,13 +16,13 @@ public class Model {
     private int vertexCount ;
 
 
-    private Shader m_Shader;
+
+    int[] vao = new int[1];
+    int[] vbo = new int[1];
 
 
+    public void loadData(float[] vertices ){
 
-    public void loadData(float[] vertices , Shader shader){
-
-        m_Shader = shader;
 
         vertexCount = vertices.length / COORDS_PER_VERTEX;
 
@@ -41,6 +43,18 @@ public class Model {
         vertexBuffer.position(0);
 
 
+        GLES30.glGenVertexArrays(1, vao, 0);
+        GLES30.glBindVertexArray(vao[0]);
+
+
+
+        GLES30.glGenBuffers(1, vbo, 0);
+
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,vbo[0]);
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,vertices.length * 4,vertexBuffer,GLES30.GL_STATIC_DRAW);
+
+        GLES30.glEnableVertexAttribArray(0);
+        GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 0, 0);
 
 
     }
@@ -49,31 +63,13 @@ public class Model {
     public void draw() {
 
 
-        m_Shader.useProgram();
 
-
-
-       int m_colorHandle = GLES20.glGetUniformLocation(m_Shader.getProgramID(), "vColor");
-
-
-        GLES20.glEnableVertexAttribArray(0);
-
-        int vertexStride = COORDS_PER_VERTEX * 4;
-
-        GLES20.glVertexAttribPointer(0, COORDS_PER_VERTEX,
-                GLES20.GL_FLOAT, false,
-                vertexStride, vertexBuffer);
-
-
-        // Set color for drawing the triangle
-        float color[] = { 0.63671875f, 0.76953125f, 0.22265625f, 1.0f };
-        GLES20.glUniform4fv(m_colorHandle, 1, color, 0);
-
-
-        // Draw the triangle
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, vertexCount);
-
-        // Disable vertex array
+        GLES30.glBindVertexArray(vao[0]);
+        GLES30.glEnableVertexAttribArray(0);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
         GLES20.glDisableVertexAttribArray(0);
+        GLES30.glBindVertexArray(0);
+
+
     }
 }

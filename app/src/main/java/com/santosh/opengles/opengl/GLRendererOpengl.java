@@ -3,6 +3,7 @@ package com.santosh.opengles.opengl;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import com.santosh.opengles.opengl.element.Model;
 import com.santosh.opengles.opengl.element.Shader;
@@ -21,6 +22,33 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
     };
 
 
+
+    float pyramidsCoords[] = {
+
+            //front face
+            0.0f,  1.0f, 0.0f,
+            -1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, 1.0f,
+
+
+            //right face
+            0.0f,  1.0f, 0.0f,
+            1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, -1.0f,
+
+
+            //back face
+            0.0f,  1.0f, 0.0f,
+            1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f,
+
+            //back face
+            0.0f,  1.0f, 0.0f,
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f, 1.0f,
+    };
+
+
     // Define vertex Shader Code
 
     final String vertexShaderCode =
@@ -33,9 +61,8 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
 
     final String fragmentShaderCode =
             "precision mediump float;" +
-                    "uniform vec4 vColor;" +
                     "void main() {" +
-                    "  gl_FragColor = vColor;" +
+                    "  gl_FragColor = vec4(0.0f,1.0f,0.0f,1.0f);" +
                     "}";
 
 
@@ -49,20 +76,18 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
     public GLRendererOpengl(Context context) {
         super();
 
-
-
     }
 
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glClearColor(0f, 0, 0, 1);
+        GLES20.glClearColor(1f, 0, 0, 1);
 
         m_Shader = new Shader(vertexShaderCode,fragmentShaderCode);
 
         m_Model = new Model();
 
-        m_Model.loadData(triangleCoords , m_Shader);
+        m_Model.loadData(triangleCoords);
 
     }
 
@@ -77,6 +102,8 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+        m_Shader.useProgram();
 
         m_Model.draw();
     }

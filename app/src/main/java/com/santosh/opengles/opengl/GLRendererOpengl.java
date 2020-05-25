@@ -2,12 +2,16 @@ package com.santosh.opengles.opengl;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.util.Log;
 
 import com.santosh.opengles.opengl.element.Model;
 import com.santosh.opengles.opengl.element.Shader;
 
+
+import java.util.Arrays;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -52,9 +56,10 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
     // Define vertex Shader Code
 
     final String vertexShaderCode =
-            "attribute vec4 vPosition;" +
+            "attribute vec3 vPosition;" +
+                    "uniform mat4 transformationMatrix;" +
                     "void main() {" +
-                    "  gl_Position = vPosition;" +
+                    "  gl_Position =  transformationMatrix * vec4(vPosition,1.0);" +
                     "}";
 
     // Define fragment Shader Code
@@ -83,11 +88,20 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glClearColor(1f, 0, 0, 1);
 
+
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+
         m_Shader = new Shader(vertexShaderCode,fragmentShaderCode);
 
         m_Model = new Model();
 
-        m_Model.loadData(triangleCoords);
+        m_Model.loadData(pyramidsCoords);
+
+        m_Model.setScale(new float[]{0.5f,0.5f,0.5f});
+
+        m_Model.setRotationZ(45);
+
+        m_Model.setRotationY(45);
 
     }
 
@@ -101,9 +115,13 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
 
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT| GLES20.GL_DEPTH_BUFFER_BIT);
 
         m_Shader.useProgram();
+
+        m_Model.incrementRotationZ(-1);
+
+        m_Shader.setTransformation(m_Model.getModelMatrix());
 
         m_Model.draw();
     }

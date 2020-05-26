@@ -16,6 +16,8 @@ public class Shader {
 
 
      int transformationMatrix;
+     int m_uniSampler2DLoc;
+
 
     public Shader(String vs, String fs) {
 
@@ -50,7 +52,7 @@ public class Shader {
         GLES30.glLinkProgram(m_pID);
 
         transformationMatrix = GLES30.glGetUniformLocation(m_pID, "transformationMatrix");
-
+        m_uniSampler2DLoc  = GLES30.glGetUniformLocation(m_pID, "textureSampler");
 
 
 
@@ -98,4 +100,11 @@ public class Shader {
         GLES30.glUniformMatrix4fv(transformationMatrix, 1, false, TM, 0);
     }
 
+
+    public void setM_uniSampler2DLoc(int unit){
+
+        GLES30.glUniform1i(m_uniSampler2DLoc, unit);
+        GLES30.glActiveTexture(unit);
+
+    }
 }

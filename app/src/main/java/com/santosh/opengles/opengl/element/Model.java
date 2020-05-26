@@ -1,9 +1,13 @@
 package com.santosh.opengles.opengl.element;
 
+import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
+import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
+
+import com.santosh.opengles.helper.IOHelper;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -12,7 +16,7 @@ import java.nio.IntBuffer;
 
 public class Model {
 
-    private FloatBuffer vertexBuffer;
+    private FloatBuffer vertexBuffer , textureBuffer;
 
     private IntBuffer indexBuffer;
 
@@ -37,10 +41,11 @@ public class Model {
 
 
     int[] vao = new int[1];
-    int[] vbo = new int[2];
+    int[] vbo = new int[3];
+    public int[] textureID = new int[1];
 
 
-    public void loadData(float[] vertices , int[] index ){
+    public void loadData(float[] vertices , int[] index , float[] texture ){
 
 
         indexCount = index.length;
@@ -55,7 +60,7 @@ public class Model {
 
         //Vertices Position Buffer
 
-        GLES30.glGenBuffers(2, vbo, 0);
+        GLES30.glGenBuffers(3, vbo, 0);
 
 
 
@@ -84,6 +89,39 @@ public class Model {
 
         GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,index.length * 4,indexBuffer,GLES30.GL_STATIC_DRAW);
 
+
+        // Texture  coordinate Buffer
+
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,vbo[2]);
+
+        textureBuffer = FloatBuffer.allocate(texture.length);
+        textureBuffer.put(texture);
+        textureBuffer.position(0);
+
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,texture.length * 4,textureBuffer,GLES30.GL_STATIC_DRAW);
+
+
+        GLES30.glEnableVertexAttribArray(1);
+        GLES30.glVertexAttribPointer(1  , 2, GLES30.GL_FLOAT, false, 0, 0);
+
+
+        // Texture File Loading
+
+        Bitmap b = IOHelper.LoadBitmapFromAssets("crate.jpg");
+
+        GLES30.glGenTextures(1, textureID, 0);
+
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID[0]);
+
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
+
+        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, b, 0);
+        b.recycle();
+
+
+
+
     }
 
 
@@ -93,8 +131,13 @@ public class Model {
 
         GLES30.glBindVertexArray(vao[0]);
         GLES30.glEnableVertexAttribArray(0);
+        GLES30.glEnableVertexAttribArray(1);
+
+
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexCount, GLES30.GL_UNSIGNED_INT, 0);
         GLES20.glDisableVertexAttribArray(0);
+        GLES20.glDisableVertexAttribArray(1);
+
         GLES30.glBindVertexArray(0);
 
 

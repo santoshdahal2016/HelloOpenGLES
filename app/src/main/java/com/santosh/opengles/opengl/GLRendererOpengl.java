@@ -121,9 +121,19 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
 
             0,4,1,1,5,4,
 
-            7,3,2,2,6,7
+            7,3,2,2,6,7,
+
+
+            0,4,7,7,0,3
     };
 
+
+    float textureCoords[] ={
+            0,0,
+            0,1,
+            1,0,
+            1,1
+    };
 
 
     private Model m_Model;
@@ -150,7 +160,7 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
 
         m_Model = new Model();
 
-        m_Model.loadData(cubeCoordswithIdex, cobeIndex);
+        m_Model.loadData(cubeCoordswithIdex, cobeIndex , textureCoords);
 
         m_Model.setScale(new float[]{0.25f,0.25f,0.25f});
 
@@ -177,7 +187,13 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
         m_Model.incrementRotationZ(-1);
 
         m_Shader.setTransformation(m_Model.getModelMatrix());
-
+//        Log.i("Texture ID", String.valueOf(m_Model.textureID[0]));
+        m_Shader.setM_uniSampler2DLoc(0);
+        GLES30.glActiveTexture(0);
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, m_Model.textureID[0]);
         m_Model.draw();
+
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0);
+
     }
 }

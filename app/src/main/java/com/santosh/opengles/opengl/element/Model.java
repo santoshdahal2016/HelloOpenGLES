@@ -14,9 +14,11 @@ public class Model {
 
     private FloatBuffer vertexBuffer;
 
+    private IntBuffer indexBuffer;
 
 
     private int vertexCount ;
+    private int indexCount;
 
     protected float[] position = new float[] { 0f, 0f, 0f };
     protected float[] rotation = new float[] { 0f, 0f, 0f };
@@ -35,46 +37,53 @@ public class Model {
 
 
     int[] vao = new int[1];
-    int[] vbo = new int[1];
+    int[] vbo = new int[2];
 
 
-    public void loadData(float[] vertices ){
+    public void loadData(float[] vertices , int[] index ){
 
 
+        indexCount = index.length;
         // number of coordinates per vertex in this array
         int COORDS_PER_VERTEX = 3;
         vertexCount = vertices.length / COORDS_PER_VERTEX;
 
-        // Move the Vertices data to the buffer
-
-        ByteBuffer bb = ByteBuffer.allocateDirect(
-                // (number of coordinate values * 4 bytes per float)
-                vertices.length * 4);
-        // use the device hardware's native byte order
-        bb.order(ByteOrder.nativeOrder());
-
-        // create a floating point buffer from the ByteBuffer
-
-        vertexBuffer = bb.asFloatBuffer();
-        // add the coordinates to the FloatBuffer
-        vertexBuffer.put(vertices);
-        // set the buffer to read the first coordinate
-        vertexBuffer.position(0);
-
-
+        // Creating VAO
         GLES30.glGenVertexArrays(1, vao, 0);
         GLES30.glBindVertexArray(vao[0]);
 
 
+        //Vertices Position Buffer
 
         GLES30.glGenBuffers(1, vbo, 0);
 
+
+
+
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,vbo[0]);
+
+        vertexBuffer = FloatBuffer.allocate(vertices.length);
+        vertexBuffer.put(vertices);
+        vertexBuffer.position(0);
+
         GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,vertices.length * 4,vertexBuffer,GLES30.GL_STATIC_DRAW);
+
 
         GLES30.glEnableVertexAttribArray(0);
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 0, 0);
 
+
+
+        GLES30.glGenBuffers(1, vbo, 1);
+
+        //Index Buffer
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,vbo[1]);
+
+        indexBuffer = IntBuffer.allocate(index.length);
+        indexBuffer.put(index);
+        indexBuffer.position(0);
+
+        GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,index.length * 4,indexBuffer,GLES30.GL_STATIC_DRAW);
 
     }
 
@@ -85,7 +94,7 @@ public class Model {
 
         GLES30.glBindVertexArray(vao[0]);
         GLES30.glEnableVertexAttribArray(0);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexCount, GLES30.GL_UNSIGNED_INT, 0);
         GLES20.glDisableVertexAttribArray(0);
         GLES30.glBindVertexArray(0);
 

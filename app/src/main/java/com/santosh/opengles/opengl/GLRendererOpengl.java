@@ -46,12 +46,82 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
             1.0f, -1.0f, -1.0f,
             -1.0f, -1.0f, -1.0f,
 
-            //back face
+            //left face
             0.0f,  1.0f, 0.0f,
             -1.0f, -1.0f, -1.0f,
             -1.0f, -1.0f, 1.0f,
     };
 
+
+    float cubeCoords[] = {
+
+            //front face
+            -1.0f,  1.0f, 1.0f,
+            -1.0f, -1.0f, 1.0f,
+            1.0f,  1.0f, 1.0f,
+            1.0f,  1.0f, 1.0f,
+            -1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, 1.0f,
+
+
+            //right face
+            1.0f,  1.0f, 1.0f,
+            1.0f, -1.0f, 1.0f,
+            1.0f,  1.0f, -1.0f,
+            1.0f,  1.0f, -1.0f,
+            1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, -1.0f,
+
+
+            //back face
+            1.0f,  1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+
+            -1.0f, -1.0f, -1.0f,
+
+            //back face
+            -1.0f,  1.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f,
+            -1.0f,  1.0f, 1.0f,
+            -1.0f,  1.0f, 1.0f,
+            -1.0f, -1.0f, -1.0f,
+
+            -1.0f, -1.0f, 1.0f,
+
+    };
+
+
+
+    float cubeCoordswithIdex[] = {
+
+            //front face
+            //x,    y,      z
+            -1.0f,  1.0f, 1.0f,
+            -1.0f, -1.0f, 1.0f,
+            1.0f, -1.0f, 1.0f,
+            1.0f,  1.0f, 1.0f,
+
+
+            //x,    y,      z
+            -1.0f,  1.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            1.0f,  1.0f, -1.0f,
+
+    };
+
+
+    int cobeIndex[] ={
+            0,1,2,2,0,3,
+            4,5,6,6,7,4,
+
+            0,4,1,1,5,4,
+
+            7,3,2,2,6,7
+    };
 
     // Define vertex Shader Code
 
@@ -86,7 +156,7 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glClearColor(1f, 0, 0, 1);
+        GLES20.glClearColor(0, 0, 0, 1);
 
 
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -95,13 +165,13 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
 
         m_Model = new Model();
 
-        m_Model.loadData(pyramidsCoords);
+        m_Model.loadData(cubeCoordswithIdex, cobeIndex);
 
-        m_Model.setScale(new float[]{0.5f,0.5f,0.5f});
+        m_Model.setScale(new float[]{0.25f,0.25f,0.25f});
 
         m_Model.setRotationZ(45);
 
-        m_Model.setRotationY(45);
+        m_Model.setRotationY(55);
 
     }
 

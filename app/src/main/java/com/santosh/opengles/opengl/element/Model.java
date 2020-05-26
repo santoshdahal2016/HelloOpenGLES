@@ -55,7 +55,7 @@ public class Model {
 
         //Vertices Position Buffer
 
-        GLES30.glGenBuffers(1, vbo, 0);
+        GLES30.glGenBuffers(2, vbo, 0);
 
 
 
@@ -74,7 +74,6 @@ public class Model {
 
 
 
-        GLES30.glGenBuffers(1, vbo, 1);
 
         //Index Buffer
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,vbo[1]);

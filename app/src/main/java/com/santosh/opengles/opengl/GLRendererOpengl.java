@@ -7,6 +7,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.santosh.opengles.helper.IOHelper;
 import com.santosh.opengles.opengl.element.Model;
 import com.santosh.opengles.opengl.element.Shader;
 
@@ -123,23 +124,6 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
             7,3,2,2,6,7
     };
 
-    // Define vertex Shader Code
-
-    final String vertexShaderCode =
-            "attribute vec3 vPosition;" +
-                    "uniform mat4 transformationMatrix;" +
-                    "void main() {" +
-                    "  gl_Position =  transformationMatrix * vec4(vPosition,1.0);" +
-                    "}";
-
-    // Define fragment Shader Code
-
-    final String fragmentShaderCode =
-            "precision mediump float;" +
-                    "void main() {" +
-                    "  gl_FragColor = vec4(0.0f,1.0f,0.0f,1.0f);" +
-                    "}";
-
 
 
     private Model m_Model;
@@ -150,6 +134,7 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
 
     public GLRendererOpengl(Context context) {
         super();
+        IOHelper.SetContext(context);
 
     }
 
@@ -161,7 +146,7 @@ public class GLRendererOpengl implements GLSurfaceView.Renderer {
 
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
-        m_Shader = new Shader(vertexShaderCode,fragmentShaderCode);
+        m_Shader = new Shader("shaders/phong.vert", "shaders/phong.frag");
 
         m_Model = new Model();
 

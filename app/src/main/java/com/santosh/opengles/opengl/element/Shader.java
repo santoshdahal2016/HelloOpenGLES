@@ -4,6 +4,9 @@ import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.util.Log;
 
+import com.santosh.opengles.helper.IOHelper;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 
@@ -17,13 +20,24 @@ public class Shader {
     public Shader(String vs, String fs) {
 
 
+        String vsSource = "";
+        String fsSource = "";
+
+        try {
+            vsSource = IOHelper.LoadShaderFileFromAssets(vs);
+            fsSource = IOHelper.LoadShaderFileFromAssets(fs);
+        }
+        catch(IOException e) {
+            Log.d("Shader", e.getMessage());
+        }
+        Log.d("Shader", vsSource);
 
         int m_vsID = GLES30.glCreateShader(GLES30.GL_VERTEX_SHADER);
-        GLES30.glShaderSource(m_vsID, vs);
+        GLES30.glShaderSource(m_vsID, vsSource);
         GLES30.glCompileShader(m_vsID);
 
         int m_fsID = GLES30.glCreateShader(GLES30.GL_FRAGMENT_SHADER);
-        GLES30.glShaderSource(m_fsID, fs);
+        GLES30.glShaderSource(m_fsID, fsSource);
         GLES30.glCompileShader(m_fsID);
 
         m_pID = GLES30.glCreateProgram();
